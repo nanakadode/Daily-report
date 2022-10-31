@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Report App</title>
+</head>
+<body>
+<h2 th:text="${title}">page title</h2>
+<h2 th:if="${complete}" th:text="${complete}"></h2>
+<form method="POST" th:action="${reportForm.newReport}? @{/report/insert} : @{/report/update}" th:object="${reportForm}">
+<!-- 
+	<label>タスクタイプ（選択してください）：</label>
+	<select name="typeId">
+	<option value="1" th:selected="*{typeId == 1}">緊急</option>
+	<option value="2" th:selected="*{typeId == 2}">重要</option>
+	<option value="3" th:selected="*{typeId == 3}">できれば</option>
+	</select><br>
+	<div th:if="${#fields.hasErrors('typeId')}" th:errors="*{typeId}"></div>
+ -->
+	<label>日報タイトル </label><br>
+	<input type="text" name="title" th:value="*{title}" /><br>
+	<div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div><br>
+	
+	<label>報告内容 </label><br>
+	<textarea name="content" id="content" rows="10" cols="40" th:field="*{content}" /></textarea><br>
+	<!-- 
+	<input type="text" name="content" th:value="*{content}" /><br>
+	 -->
+	<div th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div><br>
+	
+	<label>提出する日報の日付 </label><br>
+	<input type="datetime-local" name="date" th:value="*{date}" /><br>
+	<div th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></div><br>
+	<input  th:if="${reportId}" type="hidden" name="reportId" th:value="${reportId}">
+	<input type="submit" value="Submit">
+</form>
+<div th:if="${reportForm.newReport}" style="margin:10px">
+<h3>提出済み日報リスト</h3>
+<table>
+	<tr th:each="obj : ${list}">
+		<td th:text=${obj.id}></td>
+		<td th:text=${obj.title}></td>
+		<td th:text=${obj.date}></td>
+		<td><a type="button" th:href="@{/report/{id}(id=${obj.id})}">EDIT</a></td>
+		<td>
+			<form method="POST" th:action="@{/report/delete}">
+			<input type="hidden" name="reportId" th:value="${obj.id}">
+			<input type="submit" value="Delete">
+			</form>
+			<!-- 1-4　複製ボタンを作成する -->
+		</td>
+	</tr>
+</table>
+</div>
+<br>
+<!-- 2-7 絞り込みボタンを作成する -->
+<br>
+<!-- 2-8 絞り込み解除ボタンを作成する -->
+<p th:unless="${reportForm.newReport}"><a href="#" th:href="@{/report}">Back</a></p>
+
+</body>
+</html>
